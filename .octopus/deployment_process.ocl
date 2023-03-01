@@ -1,0 +1,60 @@
+step "run-a-script" {
+    name = "Run a Script"
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.RunOnServer = "true"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                echo Hello World
+                curl http://ifconfig.me
+            EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "Bash"
+        }
+    }
+}
+
+step "deploy-raw-kubernetes-yaml" {
+    name = "Deploy raw Kubernetes YAML"
+    properties = {
+        Octopus.Action.TargetRoles = "eks"
+    }
+
+    action {
+        action_type = "Octopus.KubernetesDeployRawYaml"
+        environments = ["staging"]
+        is_required = true
+        properties = {
+            Octopus.Action.KubernetesContainers.CustomResourceYaml = <<-EOT
+                ---
+                apiVersion: apps/v1
+                kind: Deployment
+                metadata:
+                  name: nginx
+                  labels:
+                    app: nginx
+                  namespace: default
+                spec:
+                  selector:
+                    matchLabels:
+                      app: nginx
+                  replicas: 1
+                  strategy:
+                    type: RollingUpdate
+                  template:
+                    metadata:
+                      labels:
+                        app: nginx
+                    spec:
+                      containers:
+                      - name: web
+                        image: nginx
+                        ports:
+                        - containerPort: 8080
+            EOT
+            Octopus.Action.KubernetesContainers.Namespace = "default"
+            Octopus.Action.Script.ScriptSource = "Inline"
+        }
+    }
+}
