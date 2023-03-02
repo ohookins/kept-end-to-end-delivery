@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: nginx
-  replicas: 5
+  replicas: 50
   strategy:
     type: RollingUpdate
   template:
@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: ngin
+        image: nginx
         ports:
         - containerPort: 8080
           name: ui
