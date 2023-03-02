@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: nginx
-  replicas: 50
+  replicas: 60
   strategy:
     type: RollingUpdate
   template:
