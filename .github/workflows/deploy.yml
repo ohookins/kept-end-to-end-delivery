@@ -1,0 +1,11 @@
+name: Deployment
+
+on: [deployment]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Information
+        run: echo "I have no idea when this event is meant to fire"
+
